@@ -1,0 +1,17 @@
+{
+   "background_page": "background.html",
+   "description": "Translate the text selected to the choosen language",
+   "icons": {
+      "128": "img/128x128.png",
+      "16": "img/16x16.png",
+      "19": "img/19x19.png",
+      "32": "img/32x32.png",
+      "48": "img/48x48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCkhdceNgSGMzZzOO6hTbU3SMKtQdGbw34BzWr4u3GpQiK0jkKDOuac0e8ZQG9Q5SZedLak5Y6tq2jxXDo2ZrbD5FPE7AcAGqoFKZusiuaEi7eQRQJXo8fD91zJHU1HKbsRm32IFbnwvt94DUCeB+nYGuaDyE4VVdXrGuuwZ9GL8QIDAQAB",
+   "name": "Word Translator",
+   "options_page": "settings.html",
+   "permissions": [ "contextMenus", "http://*/*", "https://*/*", "tabs" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "1.0"
+}

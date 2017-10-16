@@ -1,0 +1,306 @@
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+<!--
+  Copyright (c) 2011 Mauro Meneghin. All rights reserved.
+  web: http://g1ld0.is-a-geek.net/
+-->
+<title>Word Translator Settings</title>
+<style><!--
+
+body {
+font-family: Verdana;
+font-weight: normal;
+font-size: 15px;
+margin: 15px auto auto 15px; }
+
+td.helpHed { 
+border-bottom: 2px solid #6699CC;
+border-left: 1px solid #6699CC;
+background-color: #BEC8D1;
+text-align: left;
+text-indent: 5px;
+font-family: Verdana;
+font-weight: bold;
+font-size: 11px;
+color: #404040; }
+
+table.sofT { 
+text-align: center;
+font-family: Verdana;
+font-weight: normal;
+font-size: 11px;
+color: #404040;
+width: 580px;
+background-color: #fafafa;
+border: 1px #6699CC solid;
+border-collapse: collapse;
+border-spacing: 0px; }
+
+td.tdinput {
+border-color: #6699CC;
+border-width: 1px 1px 0 0;
+border-style: solid;
+font-family: Verdana;
+font-weight: normal;
+font-size: 11px;
+text-align: center;
+padding: 2px;
+text-indent: 0px; }
+
+td {
+border-color: #6699CC;
+border-width: 1px 1px 0 0;
+border-style: solid;
+margin: 0;
+font-family: Verdana;
+font-weight: normal;
+font-size: 11px;
+text-align: left;
+text-indent: 4px; }
+
+
+//--></style>
+
+<script language = "javascript" type = "text/javascript">
+// <!CDATA[
+var site_names=[],site_patterns=[];
+var links_patterns=[],links_l1=[],links_l2=[];
+
+var selLang='<option  value="af">Afrikaans</option><option  value="sq">Albanian</option><option  value="ar">Arabic</option><option  value="hy">Armenian</option><option  value="az">Azerbaijani</option><option  value="eu">Basque</option><option  value="be">Belarusian</option><option  value="bg">Bulgarian</option><option  value="ca">Catalan</option><option  value="zh-CN">Chinese</option><option  value="hr">Croatian</option><option  value="cs">Czech</option><option  value="da">Danish</option><option  value="nl">Dutch</option><option  value="en">English</option><option  value="et">Estonian</option><option  value="tl">Filipino</option><option  value="fi">Finnish</option><option  value="fr">French</option><option  value="gl">Galician</option><option  value="ka">Georgian</option><option  value="de">German</option><option  value="el">Greek</option><option  value="ht">Haitian Creole</option><option  value="iw">Hebrew</option><option  value="hi">Hindi</option><option  value="hu">Hungarian</option><option  value="is">Icelandic</option><option  value="id">Indonesian</option><option  value="ga">Irish</option><option  value="it">Italian</option><option  value="ja">Japanese</option><option  value="ko">Korean</option><option  value="la">Latin</option><option  value="lv">Latvian</option><option  value="lt">Lithuanian</option><option  value="mk">Macedonian</option><option  value="ms">Malay</option><option  value="mt">Maltese</option><option  value="no">Norwegian</option><option  value="fa">Persian</option><option  value="pl">Polish</option><option  value="pt">Portuguese</option><option  value="ro">Romanian</option><option  value="ru">Russian</option><option  value="sr">Serbian</option><option  value="sk">Slovak</option><option  value="sl">Slovenian</option><option  value="es">Spanish</option><option  value="sw">Swahili</option><option  value="sv">Swedish</option><option  value="th">Thai</option><option  value="tr">Turkish</option><option  value="uk">Ukrainian</option><option  value="ur">Urdu</option><option  value="vi">Vietnamese</option><option  value="cy">Welsh</option><option  value="yi">Yiddish</option>';
+
+function delSite(i)
+{
+  site_names.splice(i,1);
+  site_patterns.splice(i,1);
+
+  saveSettings();
+  update_view();
+}
+
+function addSite()
+{
+
+  var site,patter;
+  site=document.getElementById ('site').value;
+  pattern=document.getElementById ('pattern').value;
+  if(!site || !pattern || site.length==0 || pattern.length==0)
+  {
+    document.getElementById ('site').value='';
+    document.getElementById ('pattern').value='';
+    return
+  }
+  site_names.push(site);
+  site_patterns.push(pattern);
+
+  saveSettings();
+  update_view();
+}
+function addLink()
+{
+  var pattern,lang1,lang2;
+  pattern=document.getElementById('selPattern').value;
+  lang1=document.getElementById('lang1').value;
+  lang2=document.getElementById('lang2').value;
+  links_patterns.push(pattern);
+  links_l1.push(lang1);
+  links_l2.push(lang2);
+
+  var desc='unknown',i;
+  for(i=0;i<site_names.length;i++)
+  {
+    if(site_patterns[i]==pattern)
+    {
+      desc=site_names[i];
+      break;
+    }
+  }
+  links_desc.push(lang1+'->'+lang2+' ('+desc+')');
+  var url=pattern.replace(/\{1\}/g,lang1).replace(/\{2\}/g,lang2);
+  links_url.push(url);
+
+  saveSettings();
+  update_view();
+}
+function delLink(i)
+{
+  links_patterns.splice(i,1);
+  links_l1.splice(i,1);
+  links_l2.splice(i,1);
+
+  links_desc.splice(i,1);
+  links_url.splice(i,1);
+
+  saveSettings();
+  update_view();
+}
+
+var showHelpSites=false;
+function helpSites()
+{
+  showHelpSites=! showHelpSites;
+  var div=document.getElementById("helpSites");
+  if(showHelpSites)
+    div.style.display="block";
+  else
+    div.style.display="none";
+}
+function update_view()
+{
+  var i;
+  var newTable, startTag, endTag;
+  startTag =
+    "<TABLE id='sitesTbl' class='sofT' cellspacing='0'><TBODY>"+
+    "<TR><TD class='helpHed'>Site</TD><TD class='helpHed'>Pattern</TD>"+
+    "<TD class='helpHed'><A HREF='javascript:helpSites();'>Help</A></TD></TR>";
+  var inputRow='<TR><TD class="tdinput"><input id = "site" type = "text" style="width:100%"/></TD>'+
+               '<TD class="tdinput"><input id = "pattern" type ="text" style="width:100%"/></TD>'+
+               '<TD><input id = "CmdAdd" type = "button" value = "Add" '+
+                    'onClick = "addSite();"/></TD></TR>';
+
+  endTag = "</TBODY></TABLE>";
+  newTable = startTag+inputRow;
+  for (i=0; i<site_names.length; i++)
+  {
+    newTable += "<TR><TD>" + site_names[i] + "</TD>";
+    newTable += "<TD>" + site_patterns[i] + "</TD>";
+    newTable += '<TD><input type = "button" value = "Del" onClick="javascript:delSite('+
+                i+');"/></TD></TR>';
+  }
+
+  newTable += endTag;
+  document.getElementById ('sitesDiv').innerHTML = newTable;
+
+
+  startTag =
+    "<TABLE id='linksTbl' class='sofT' cellspacing='0'><TBODY>"+
+    "<TR><TD class='helpHed'>Pattern</TD><TD class='helpHed'>Site Lang</TD>"+
+    "<TD class='helpHed'>Translation Lang</TD>"+
+    "<TD class='helpHed'><A HREF='javascript:helpSites();'>Help</A></TD></TR>";
+  inputRow='<TR><TD class="tdinput"><select id="selPattern">';
+  for(i=0; i<site_patterns.length; i++)
+  {
+    inputRow+='<option value="'+site_patterns[i]+'">'+site_patterns[i]+'</option>';
+  }
+  inputRow+='</select></TD>';
+
+  inputRow+='<TD class="tdinput"><select id="lang1">';
+  inputRow+=selLang;
+  inputRow+='</select></TD>';
+
+  inputRow+='<TD class="tdinput"><select id="lang2">';
+  inputRow+=selLang;
+  inputRow+='</select></TD>';
+  
+  inputRow+='<TD><input type = "button" value = "Add" '+
+                    'onClick = "addLink();"/></TD></TR>';
+
+  newTable = startTag+inputRow;
+  for(i=0; i<links_patterns.length; i++)
+  {
+    newTable+='<TR><TD>'+links_patterns[i]+'</TD><TD>'+links_l1[i]+'</TD><TD>'+links_l2[i]+'</TD>'+
+              '<TD><input type = "button" value = "Del" '+ 'onClick = "delLink('+i+');"/></TD></TR>';
+  }
+  
+  newTable += endTag;
+  document.getElementById ('linksDiv').innerHTML = newTable;
+
+  var bpage=chrome.extension.getBackgroundPage();
+  bpage.updateContextMenu();
+
+}
+function onload()
+{
+  site_names=localStorage["site_names"];
+  site_patterns=localStorage["site_patterns"];
+  if(!site_names || !site_patterns) 
+    return defaultSettings();
+
+  try {
+    site_names=JSON.parse(site_names);
+    site_patterns=JSON.parse(site_patterns);
+  }catch(e)
+  {
+    alert('error: parsing stored settings');
+    return defaultSettings();
+  }
+  if(!site_names || !site_patterns || site_names.length==0 || site_patterns.length==0)
+    return defaultSettings();
+
+  links_patterns=localStorage["links_patterns"];
+  links_l1=localStorage["links_l1"];
+  links_l2=localStorage["links_l2"];
+  if(!links_patterns)links_patterns=[];
+  else links_patterns=JSON.parse(links_patterns);
+  if(!links_l1)links_l1=[];
+  else links_l1=JSON.parse(links_l1);
+  if(!links_l2)links_l2=[];
+  else links_l2=JSON.parse(links_l2);
+
+  links_desc=localStorage["links_desc"];
+  links_url=localStorage["links_url"];
+  if(!links_desc)links_desc=[];
+  else links_desc=JSON.parse(links_desc);
+  if(!links_url)links_url=[];
+  else links_url=JSON.parse(links_url);
+
+  update_view();
+}
+function saveSettings()
+{
+  localStorage["site_names"]=JSON.stringify(site_names);
+  localStorage["site_patterns"]=JSON.stringify(site_patterns);
+
+  localStorage["links_patterns"]=JSON.stringify(links_patterns);
+  localStorage["links_l1"]=JSON.stringify(links_l1);
+  localStorage["links_l2"]=JSON.stringify(links_l2);
+
+  localStorage["links_desc"]=JSON.stringify(links_desc);
+  localStorage["links_url"]=JSON.stringify(links_url);
+}
+function defaultSettings()
+{
+  site_names=['google translate','wordreference'];
+  site_patterns=['http://translate.google.com/?tab=wT#{1}|{2}|{0}',
+    'http://wordreference.com/{1}{2}/{0}'];
+
+  links_patterns=[];
+  links_l1=[];
+  links_l2=[];
+
+  links_desc=[];
+  links_url=[];
+
+  saveSettings();
+  update_view();
+}
+
+//]]>
+
+</script>
+</head>
+
+<body onload="onload();">
+<form id = "form1">
+  <div id = "helpSites" style="display:none">
+  Copyright (c) 2011 Mauro Meneghin,
+  (<a href="http://g1ld0.is-a-geek.net/">homepage</a>). 
+  All rights reserved. <br />
+  This google-chromium extension allows to translate the selected
+  text to your preferred language, using a google translator or
+  a web site that you can insert here as pattern. <br />
+
+    Site: a description of the site <br />
+    Pattern: a URL where
+{0}=selected word to look up in the dictionary,
+{1}=page language,
+{2}=translate to this language.
+<p />
+  </div> 
+  <div id = "sitesDiv"> </div> 
+  <br />
+  <div id = "linksDiv"> </div> 
+
+</form> 
+</body> </html>
+
+
